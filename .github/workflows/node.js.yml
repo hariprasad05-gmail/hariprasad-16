@@ -40,10 +40,19 @@ jobs:
       with:
         name: build-artifact
         path: ./template-vanilla/dist
-    - name: Zip application for deployment
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifact
+        path: ./artifact
+
+    - name: Zip artifact for deployment
       run: |
-        zip -r ../nodejs-app-${{ github.sha }}.zip . -x "node_modules/*"
-        ls -lh
+       cd artifact
+       zip -r ../nodejs-app-${{ github.sha }}.zip .
+       cd ..
+       ls -lh nodejs-app-${{ github.sha }}.zip
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
