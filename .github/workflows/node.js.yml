@@ -50,6 +50,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
+    - name: Verify ZIP exists
+      run: |
+        echo "Current path: $PWD"
+        find . -name "nodejs-app-*.zip" -type f
+
     - name: Upload application bundle to S3
       run: |
         aws s3 cp nodejs-app-${{ github.sha }}.zip s3://elasticbeanstalk-ap-south-1-577004484740-${{ github.repository_owner }}/nodejs-app-${{ github.sha }}.zip
