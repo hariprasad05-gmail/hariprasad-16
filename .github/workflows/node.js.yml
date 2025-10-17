@@ -8,6 +8,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -42,6 +43,7 @@ jobs:
     - name: Zip application for deployment
       run: |
         zip -r ../nodejs-app-${{ github.sha }}.zip . -x "node_modules/*"
+        ls -lh
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
