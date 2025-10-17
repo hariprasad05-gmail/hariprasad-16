@@ -52,7 +52,7 @@ jobs:
 
     - name: Upload application bundle to S3
       run: |
-        aws s3 cp nodejs-app-${{ github.sha }}.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }}/nodejs-app-${{ github.sha }}.zip
+        aws s3 cp nodejs-app-${{ github.sha }}.zip s3://elasticbeanstalk-ap-south-1-577004484740-${{ github.repository_owner }}/nodejs-app-${{ github.sha }}.zip
 
     - name: Create new Elastic Beanstalk application version
       run: |
