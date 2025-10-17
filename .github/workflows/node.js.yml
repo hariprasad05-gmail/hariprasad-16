@@ -39,3 +39,31 @@ jobs:
       with:
         name: build-artifact
         path: ./template-vanilla/dist
+    - name: Zip application for deployment
+      run: |
+        cd project/vanilla
+        zip -r ../../nodejs-app-${{ github.sha }}.zip . -x "node_modules/*"
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Upload application bundle to S3
+      run: |
+        aws s3 cp nodejs-app-${{ github.sha }}.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }}/nodejs-app-${{ github.sha }}.zip
+
+    - name: Create new Elastic Beanstalk application version
+      run: |
+        aws elasticbeanstalk create-application-version \
+          --application-name "${{ secrets.EB_APP_NAME }}" \
+          --version-label "${{ github.sha }}" \
+          --source-bundle S3Bucket="elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ github.repository_owner }}",S3Key="nodejs-app-${{ github.sha }}.zip"
+
+    - name: Deploy new version to Elastic Beanstalk
+      run: |
+        aws elasticbeanstalk update-environment \
+          --environment-name "${{ secrets.EB_ENV_NAME }}" \
+          --version-label "${{ github.sha }}"
