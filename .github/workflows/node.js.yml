@@ -41,7 +41,6 @@ jobs:
         path: ./template-vanilla/dist
     - name: Zip application for deployment
       run: |
-        cd template-vanilla
         zip -r ../nodejs-app-${{ github.sha }}.zip . -x "node_modules/*"
 
     - name: Configure AWS credentials
