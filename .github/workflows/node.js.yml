@@ -48,9 +48,6 @@ jobs:
         path: ./artifact
         unzip: true 
 
-    - name: Unzip artifact
-      run: unzip ./artifact/build-artifact.zip -d ./artifact
-
     - name: Zip artifact for deployment
       run: |
        cd artifact
