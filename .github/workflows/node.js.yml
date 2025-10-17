@@ -53,6 +53,8 @@ jobs:
        zip -r ../nodejs-app-${{ github.sha }}.zip .
        cd ..
        ls -lh nodejs-app-${{ github.sha }}.zip
+       pwd
+       ls -lrt
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
