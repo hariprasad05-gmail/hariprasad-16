@@ -50,7 +50,6 @@ jobs:
 
     - name: Zip artifact for deployment
       run: |
-       cd artifact
        zip -r ../nodejs-app-${{ github.sha }}.zip .
        cd ..
        ls -lh nodejs-app-${{ github.sha }}.zip
