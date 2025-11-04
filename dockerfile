@@ -1,33 +1,36 @@
-FROM node:18-alpine
+# Use a newer Node.js base image compatible with Vite 7.x
+FROM node:22-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy dependency files first for caching
 COPY package*.json ./
+
+# Install dependencies cleanly
 RUN npm ci
 
-# Copy the rest of your application source code
+# Copy the rest of the application
 COPY . .
 
-# Build the application (adjust if your build output folder is different)
+# Build the application
 RUN npm run build --if-present
 
-# Debug step: list files to verify the build output directory
+# Verify build output
 RUN ls -la /app
 
-# Install Nginx in the same container
-RUN apk update && apk add nginx
+# Install Nginx for serving static files
+RUN apk update && apk add --no-cache nginx
 
-# Remove the default Nginx website content
+# Remove default Nginx site content
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy the build output to Nginx's public folder
-# Update '/app/build' if your build output is in a different directory (e.g., '/app/dist')
-RUN cp -R /app/build /usr/share/nginx/html
-RUN cp -R /app/public /usr/share/nginx/html
+# Copy built assets to Nginx web root
+# Adjust 'dist' if your build folder differs
+RUN cp -R /app/dist/* /usr/share/nginx/html/
 
-# Expose port 80 to serve the application
+# Expose port 80
 EXPOSE 80
 
-# Start Nginx in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
