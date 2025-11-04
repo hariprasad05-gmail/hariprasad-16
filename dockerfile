@@ -1,36 +1,23 @@
-# Use a newer Node.js base image compatible with Vite 7.x
-FROM node:22-alpine
+# Base image
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files first for caching
-COPY package*.json ./
+# Copy only package files first (for caching)
+COPY template-vanilla/package*.json ./
 
-# Install dependencies cleanly
+# Install dependencies
 RUN npm ci
 
 # Copy the rest of the application
-COPY . .
+COPY template-vanilla/ .
 
-# Build the application
+# Build the app
 RUN npm run build --if-present
 
-# Verify build output
-RUN ls -la /app
+# Expose port (if applicable)
+EXPOSE 3000
 
-# Install Nginx for serving static files
-RUN apk update && apk add --no-cache nginx
-
-# Remove default Nginx site content
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy built assets to Nginx web root
-# Adjust 'dist' if your build folder differs
-RUN cp -R /app/dist/* /usr/share/nginx/html/
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start command
+CMD ["npm", "start"]
